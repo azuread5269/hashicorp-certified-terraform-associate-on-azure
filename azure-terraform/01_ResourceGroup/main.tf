@@ -5,9 +5,7 @@
 # }
 
 # valid for terraform version 0.14
-provider "azurerm" {
-  features {}
-}
+
 
 terraform {
   required_providers {
@@ -17,6 +15,11 @@ terraform {
     }
   }
 }
+
+provider "azurerm" {
+  features {}
+}
+
 
 resource "azurerm_resource_group" "rg" {
   name     = "myFirstResourceGroup"
