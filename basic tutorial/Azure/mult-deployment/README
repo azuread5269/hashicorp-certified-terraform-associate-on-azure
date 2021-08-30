@@ -25,6 +25,10 @@ terraform.exe apply -state .\dev\dev.tfstate .dev\dev.tfplan
 terraform.exe apply -state .\test\test.tfstate .test\test.tfplan
 terraform.exe apply -state .\prod\prod.tfstate .prod\prod.tfplan
 
+to destroy its 
+terraform.exe destroy -state .\prod\prod.tfstate -var-file .\prod\prod.tfvars -auto-approve
+terraform.exe destroy -state .\test\test.tfstate -var-file .\test\test.tfvars -auto-approve
+terraform.exe destroy -state .\dev\dev.tfstate -var-file .\dev\dev.tfvars -auto-approve
 
 
 
