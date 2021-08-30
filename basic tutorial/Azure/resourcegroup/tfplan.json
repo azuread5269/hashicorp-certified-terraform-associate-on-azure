@@ -1,0 +1,152 @@
+{
+    "format_version": "0.2",
+    "terraform_version": "1.0.5",
+    "variables": {
+        "resource_group_location": {
+            "value": "ukwest"
+        },
+        "resource_group_name": {
+            "value": "pw_rg2"
+        }
+    },
+    "planned_values": {
+        "root_module": {
+            "resources": [{
+                "address": "azurerm_resource_group.pwrg",
+                "mode": "managed",
+                "type": "azurerm_resource_group",
+                "name": "pwrg",
+                "provider_name": "registry.terraform.io/hashicorp/azurerm",
+                "schema_version": 0,
+                "values": {
+                    "location": "ukwest",
+                    "name": "pw_rg2",
+                    "tags": null,
+                    "timeouts": null
+                },
+                "sensitive_values": {}
+            }]
+        }
+    },
+    "resource_drift": [{
+        "address": "azurerm_resource_group.pwrg",
+        "mode": "managed",
+        "type": "azurerm_resource_group",
+        "name": "pwrg",
+        "provider_name": "registry.terraform.io/hashicorp/azurerm",
+        "change": {
+            "actions": ["update"],
+            "before": {
+                "id": "/subscriptions/b312c3d5-5b7c-4ab6-ae52-2b3a94b9c232/resourceGroups/pw_rg1",
+                "location": "ukwest",
+                "name": "pw_rg1",
+                "tags": null,
+                "timeouts": null
+            },
+            "after": {
+                "id": "/subscriptions/b312c3d5-5b7c-4ab6-ae52-2b3a94b9c232/resourceGroups/pw_rg1",
+                "location": "ukwest",
+                "name": "pw_rg1",
+                "tags": {},
+                "timeouts": null
+            },
+            "before_sensitive": {},
+            "after_sensitive": {
+                "tags": {}
+            }
+        }
+    }],
+    "resource_changes": [{
+        "address": "azurerm_resource_group.pwrg",
+        "mode": "managed",
+        "type": "azurerm_resource_group",
+        "name": "pwrg",
+        "provider_name": "registry.terraform.io/hashicorp/azurerm",
+        "change": {
+            "actions": ["delete", "create"],
+            "before": {
+                "id": "/subscriptions/b312c3d5-5b7c-4ab6-ae52-2b3a94b9c232/resourceGroups/pw_rg1",
+                "location": "ukwest",
+                "name": "pw_rg1",
+                "tags": {},
+                "timeouts": null
+            },
+            "after": {
+                "location": "ukwest",
+                "name": "pw_rg2",
+                "tags": null,
+                "timeouts": null
+            },
+            "after_unknown": {
+                "id": true
+            },
+            "before_sensitive": {
+                "tags": {}
+            },
+            "after_sensitive": {},
+            "replace_paths": [
+                ["name"]
+            ]
+        },
+        "action_reason": "replace_because_cannot_update"
+    }],
+    "prior_state": {
+        "format_version": "0.2",
+        "terraform_version": "1.0.5",
+        "values": {
+            "root_module": {
+                "resources": [{
+                    "address": "azurerm_resource_group.pwrg",
+                    "mode": "managed",
+                    "type": "azurerm_resource_group",
+                    "name": "pwrg",
+                    "provider_name": "registry.terraform.io/hashicorp/azurerm",
+                    "schema_version": 0,
+                    "values": {
+                        "id": "/subscriptions/b312c3d5-5b7c-4ab6-ae52-2b3a94b9c232/resourceGroups/pw_rg1",
+                        "location": "ukwest",
+                        "name": "pw_rg1",
+                        "tags": {},
+                        "timeouts": null
+                    },
+                    "sensitive_values": {
+                        "tags": {}
+                    }
+                }]
+            }
+        }
+    },
+    "configuration": {
+        "provider_config": {
+            "azurerm": {
+                "name": "azurerm",
+                "version_constraint": "2.73.0",
+                "expressions": {
+                    "features": [{}]
+                }
+            }
+        },
+        "root_module": {
+            "resources": [{
+                "address": "azurerm_resource_group.pwrg",
+                "mode": "managed",
+                "type": "azurerm_resource_group",
+                "name": "pwrg",
+                "provider_config_key": "azurerm",
+                "expressions": {
+                    "location": {
+                        "references": ["var.resource_group_location"]
+                    },
+                    "name": {
+                        "references": ["var.resource_group_name"]
+                    }
+                },
+                "schema_version": 0
+            }],
+            "variables": {
+                "resource_group_location": {},
+                "resource_group_name": {}
+            }
+        }
+    }
+}
