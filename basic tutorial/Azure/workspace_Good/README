@@ -1,0 +1,39 @@
+terraform init 
+
+terraform workspace list 
+
+# create wokspace test 
+terraform workspace new test 
+
+terraform plan -out test.tfplan
+
+terraform apply test.tfplan
+
+
+# create wokspace dev
+terraform workspace new dev
+
+terraform plan -out dev.tfplan
+
+terraform apply dev.tfplan
+
+# create wokspace prod
+terraform workspace new prod
+
+terraform plan -out prod.tfplan
+
+terraform apply prod.tfplan
+
+this creates a terraform.tfstate.d
+and in there dev,test and prod 
+plus the state files for each 
+
+
+to derstroy 
+
+make sure you are in the correct workspace 
+terraform workspace list 
+
+terraform workspace select test 
+terraform workspace select dev 
+terraform workspace select prod

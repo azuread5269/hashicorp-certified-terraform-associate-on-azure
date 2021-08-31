@@ -34,3 +34,5 @@ terraform.exe destroy -state .\dev\dev.tfstate -var-file .\dev\dev.tfvars -auto-
 
 
 
+
+
