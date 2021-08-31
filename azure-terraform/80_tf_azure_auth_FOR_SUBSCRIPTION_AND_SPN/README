@@ -43,3 +43,9 @@ copy and paste this back into your main.tf
 make sure to log out of your AZ account!! 
 
 az logout !!!
+
+terraform init 
+terraform plan 
+terraform apply 
+
+no login required!!!!
