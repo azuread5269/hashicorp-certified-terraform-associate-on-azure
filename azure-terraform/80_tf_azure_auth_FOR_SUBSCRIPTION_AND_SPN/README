@@ -1,5 +1,5 @@
 cloud shell run 
-az ad sp create-for-rbac -n terraform-5269-spn
+az ad sp create-for-rbac -n terraform-5269-spn --role contributor
 
 output 
 
@@ -49,3 +49,9 @@ terraform plan
 terraform apply 
 
 no login required!!!!
+
+
+to remove the SPN use the following - the id is the client id 
+
+az login 
+az ad sp delete --id 68aad817-b4d7-4642-bbab-825637fdfd54 
