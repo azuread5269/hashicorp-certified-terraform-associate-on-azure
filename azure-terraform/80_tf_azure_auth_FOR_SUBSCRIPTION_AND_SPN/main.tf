@@ -1,19 +1,20 @@
-provider "azurerm" {
-  features {}
-
-  subscription_id = "0cb12691-4f8e-4a66-xxxx-4481e2f0517e"
-  client_id       = "8df55d66-2860-4349-b20b-da9ad1b9a450"
-  client_secret   = "2vp1x_Km8PtA6Q.sJr.NRT212OLQfFBplG"
-  tenant_id       = "558506eb-9459-4ef3-xxxx-ad55c555e729"
-}
-
 terraform {
   required_providers {
     azurerm = {
-      source  = "hashicorp/azurerm"
-      version = "2.56.0"
+      source = "hashicorp/azurerm"
+      version = "2.73.0"
     }
   }
+}
+
+
+provider "azurerm" {
+  features {}
+
+  subscription_id = "b312c3d5-5b7c-4ab6-ae52-2b3a94b9c232" #= subscription_id
+  client_id       = "68aad817-b4d7-4642-bbab-825637fdfd54" #= appid from above 
+  client_secret   = "s~7bWp5MCk5xBwSdPbjaDnESZJi23jQnZi" #= password from above 
+  tenant_id       = "d4cfe037-3ef4-42d7-a3f8-74f292af0782" #= tenant from above 
 }
 
 resource "azurerm_resource_group" "rg" {
