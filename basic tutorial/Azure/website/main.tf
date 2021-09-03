@@ -19,28 +19,50 @@ provider "azurerm" {
 }
 
 resource "azurerm_resource_group" "pw_rg" {
-  name     = var.resource_group_name
+  count = 2
+  name     = element(var.resource_group_name, count.index)
   location = var.resource_group_location
+  tags = {
+
+    environment = "Demo-RG-${count.index+1}"
+  }
 }
 
 resource "azurerm_storage_account" "pw_sa" {
-  name                     = "pwsa5269"
-  resource_group_name      = azurerm_resource_group.pw_rg.name
-  location                 = azurerm_resource_group.pw_rg.location
+  count = 2
+  name                     = "pwsa5269${count.index+1}"
+  resource_group_name      = element(var.resource_group_name, count.index)
+  location                 = var.resource_group_location
   account_tier             = var.account_tier
   account_replication_type = var.account_replication_type
+  tags = {
+    environment = "Demo-SA-${count.index+1}"
+  }
+  depends_on = [
+    azurerm_resource_group.pw_rg,
+  ]
 }
 
 resource "azurerm_storage_container" "pw_sc" {
-  name                  = "content"
-  storage_account_name  = azurerm_storage_account.pw_sa.name
+  count = 2
+  name                  = "pwsc5269${count.index+1}"
+  # storage_account_name  = element(var.storage_account_name, count.index)
+  storage_account_name = "pwsa5269${count.index+1}"
   container_access_type = "private"
+  depends_on = [
+    azurerm_storage_account.pw_sa,
+  ]
 }
 
 resource "azurerm_storage_blob" "pw_sb" {
-  name                   = "my-awesome-content.zip5269"
-  storage_account_name   = azurerm_storage_account.pw_sa.name
-  storage_container_name = azurerm_storage_container.pw_sc.name
+  count = 2
+  name                   = "pwsb5269${count.index+1}"
+  storage_account_name   = "pwsa5269${count.index+1}"
+  storage_container_name = "pwsc5269${count.index+1}"
   type                   = "Block"
   # source                 = "some-local-file.zip"
+  depends_on = [
+    azurerm_storage_container.pw_sc,
+  ]
+
 }
