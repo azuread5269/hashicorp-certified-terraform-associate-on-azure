@@ -1,7 +1,7 @@
-# output "webapp_url" {
-#     value = azurerm_app_service.example.default_site_hostname
+# output "resource_group_names" {
+#     value = azurerm_resource_group.pw_rg[count.index].name 
 # }
 
-# output "webapp_ips" {
-#     value = azurerm_app_service.example.outbound_ip_addresses
+# output "storage_account_names" {
+#     value = azurerm_storage_account.pw_sa[count.index].name 
 # }
