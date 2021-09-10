@@ -1,0 +1,5 @@
+resource_group_name     ="resourcegroup_84975306"
+resource_group_location = "East US"
+storage_account_name   = "mystorage5269"
+account_tier            = "Standard"
+account_replication_type = "LRS"
