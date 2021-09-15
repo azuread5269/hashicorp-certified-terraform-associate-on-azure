@@ -5,6 +5,12 @@ terraform {
       version = "2.73.0"
     }
   }
+  backend "azurerm" {
+    resource_group_name = "pwrg1"
+    storage_account_name = "pwa5269storage"
+    container_name = "pwstorageconainer5269"
+    key = "terraform.state"
+  }
 }
 
 provider "azurerm" {
@@ -16,10 +22,10 @@ provider "azurerm" {
   # tenantId": "d4cfe037-3ef4-42d7-a3f8-74f292af0782"
 }
 
-resource "azurerm_resource_group" "pwrg1" {
-  name = var.resource_group_name
-  location = var.resource_group_location 
-}
+# resource "azurerm_resource_group" "pwrg1" {
+#   name = var.resource_group_name
+#   location = var.resource_group_location 
+# }
 
 resource "azurerm_virtual_network" "pwvn1" {
   name                = var.azurerm_virtual_network
