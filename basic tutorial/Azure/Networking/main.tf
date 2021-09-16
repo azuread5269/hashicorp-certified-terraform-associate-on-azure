@@ -91,6 +91,7 @@ resource "azurerm_public_ip" "pw5269pubip1" {
     location                     = var.resource_group_location
     resource_group_name          = var.resource_group_name
     allocation_method            = "Dynamic"
+    domain_name_label            = "pw5269vm1"
 
     tags = {
         environment = "Terraform Demo"
@@ -131,6 +132,7 @@ resource "azurerm_virtual_machine" "pw5269vm1" {
   resource_group_name   = var.resource_group_name
   network_interface_ids = [azurerm_network_interface.pw5269nic1.id]
   vm_size               = "Standard_B1s"
+  delete_data_disks_on_termination = true
 
 storage_image_reference {
   publisher = "microsoftwindowsserver"
@@ -144,6 +146,7 @@ storage_os_disk {
   caching           = "ReadWrite"
   create_option     = "FromImage"
   managed_disk_type = "Standard_LRS"
+  
   }
 os_profile {
   computer_name  = "pw52692019DC"
@@ -151,11 +154,17 @@ os_profile {
   admin_password = "Pa55w0rd101!"
   }
 
-    os_profile_windows_config {
-        provision_vm_agent = true
-        winrm {
-          protocol = "http"
+  os_profile_windows_config {
+  provision_vm_agent = true
+  
+     winrm {
+         protocol = "http"
         }
+    
+  }
+
+  boot_diagnostics {
+    enabled = false
   }
 
 }
