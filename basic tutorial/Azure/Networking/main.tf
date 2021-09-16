@@ -106,6 +106,7 @@ resource "azurerm_network_interface" "pw5269nic1" {
     name                          = "lan"
     subnet_id                     = azurerm_subnet.pw5269subs[0].id
     private_ip_address_allocation = "Dynamic"
+    public_ip_address_id = azurerm_public_ip.pw5269pubip1.id
   }
 
   depends_on = [
@@ -148,6 +149,13 @@ os_profile {
   computer_name  = "pw52692019DC"
   admin_username = "pwaller"
   admin_password = "Pa55w0rd101!"
+  }
+
+    os_profile_windows_config {
+        provision_vm_agent = true
+        winrm {
+          protocol = "http"
+        }
   }
 
 }
