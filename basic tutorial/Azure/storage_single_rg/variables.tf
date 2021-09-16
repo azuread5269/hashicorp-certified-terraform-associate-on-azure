@@ -1,6 +1,5 @@
 variable "resource_group_name" {
     type        = string
-    default     = "pwrg1"
     description = "RG name in Azure"
 }
 

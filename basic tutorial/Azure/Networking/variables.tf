@@ -20,6 +20,60 @@ variable "azurerm_subnet" {
     description = "Azure Virtual Network"
 }
 
+variable "azurerm_network_security_group" {
+    type        = string
+    description = "Azure network security group"
+}
+
+variable "security_rule_name" {
+    type        = string
+    description = "Azure network security rule"
+}
+
+variable "network_interface_name" {
+    type        = string
+    description = "Azure network interface"
+}
+
+variable "public_ip_address" {
+    type        = string
+    description = "Azure public ip address"
+}
+
+variable "vm_name_prefix" {
+    type = string
+    description = "Azure VM name"
+}
+
+
+
+# variable "security_rule_name1" {
+#     type        = string
+#     description = "Azure network security rule1"
+# }
+
+# variable "security_rule_name2" {
+#     type        = string
+#     description = "Azure network security rule2"
+# }
+
+# variable "security_rule_name3" {
+#     type        = string
+#     description = "Azure network security rule1"
+# }
+
+
+variable "destination_port_range" {
+    type        = list
+    description = "Azure network security rule1"
+    default = [
+        "80",
+        "3389",
+        "5985",
+        "5986"
+    ]
+}
+
 variable "subnet_prefix" {
     description = "my subnet prefixes"
     default = [
