@@ -30,20 +30,29 @@ variable "security_rule_name" {
     description = "Azure network security rule"
 }
 
-variable "network_interface_name" {
+variable "network_interface_name1" {
     type        = string
     description = "Azure network interface"
 }
 
-variable "public_ip_address" {
+variable "public_ip_address1" {
     type        = string
     description = "Azure public ip address"
 }
 
-variable "vm_name_prefix" {
-    type = string
-    description = "Azure VM name"
+variable "network_interface_name2" {
+    type        = string
+    description = "Azure network interface"
 }
+
+variable "public_ip_address2" {
+    type        = string
+    description = "Azure public ip address"
+}
+# variable "vm_name_prefix" {
+#     type = string
+#     description = "Azure VM name"
+# }
 
 
 

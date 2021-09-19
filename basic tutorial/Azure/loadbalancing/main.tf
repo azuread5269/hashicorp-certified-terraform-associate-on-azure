@@ -8,6 +8,7 @@ terraform {
     random = {
       source = "hashicorp/random"
       version = ">=3.0"
+          
     }
   }
   # backend "azurerm" {
@@ -18,6 +19,20 @@ terraform {
   # }
 }
 
+resource "random_integer" "vmname" {
+  min = 1
+  max = 10000
+}
+
+# Machine Name
+locals {
+  vmname = "pw5269${random_integer.vmname.result}"
+  vmdisk = "pw5269disk${random_integer.vmname.result}"
+}
+
+
+
+
 provider "azurerm" {
   # Configuration options
   features {}
@@ -27,12 +42,12 @@ provider "azurerm" {
   tenant_id       = "d4cfe037-3ef4-42d7-a3f8-74f292af0782" #= tenant from above 
 }
 
-resource "azurerm_resource_group" "pwrg1" {
-  name = var.resource_group_name
-  location = var.resource_group_location 
-}
+# resource "azurerm_resource_group" "pwrg1" {
+#   name = var.resource_group_name
+#   location = var.resource_group_location 
+# }
 
-resource "azurerm_virtual_network" "pw5269vn1" {
+resource "azurerm_virtual_network" "pw5269vn" {
   name                = var.azurerm_virtual_network
   location            = var.resource_group_location 
   resource_group_name = var.resource_group_name
@@ -53,12 +68,12 @@ resource "azurerm_subnet" "pw5269subs" {
    address_prefixes = [var.subnet_prefix[count.index]] # if a list 
   #  address_prefixes = "${element(var.subnet_prefix, count.index)}" # if a list 
   depends_on = [
-    azurerm_virtual_network.pw5269vn1,
+    azurerm_virtual_network.pw5269vn,
   ]
 }
 
 
-resource "azurerm_network_security_group" "pw5269nsg1" {
+resource "azurerm_network_security_group" "pw5269nsg" {
   name                = var.azurerm_network_security_group
   location            = var.resource_group_location
   resource_group_name = var.resource_group_name
@@ -87,7 +102,7 @@ resource "azurerm_network_security_group" "pw5269nsg1" {
 
 # Create public IPs
 resource "azurerm_public_ip" "pw5269pubip1" {
-    name                         = var.public_ip_address
+    name                         = var.public_ip_address1
     location                     = var.resource_group_location
     resource_group_name          = var.resource_group_name
     allocation_method            = "Dynamic"
@@ -99,7 +114,7 @@ resource "azurerm_public_ip" "pw5269pubip1" {
 }
 
 resource "azurerm_public_ip" "pw5269pubip2" {
-    name                         = var.public_ip_address
+    name                         = var.public_ip_address2
     location                     = var.resource_group_location
     resource_group_name          = var.resource_group_name
     allocation_method            = "Dynamic"
@@ -111,7 +126,7 @@ resource "azurerm_public_ip" "pw5269pubip2" {
 }
 
 resource "azurerm_network_interface" "pw5269nic1" {
-  name                = var.network_interface_name
+  name                = var.network_interface_name1
   location            = var.resource_group_location
   resource_group_name = var.resource_group_name
 
@@ -133,7 +148,7 @@ resource "azurerm_network_interface" "pw5269nic1" {
 }
 
 resource "azurerm_network_interface" "pw5269nic2" {
-  name                = var.network_interface_name
+  name                = var.network_interface_name2
   location            = var.resource_group_location
   resource_group_name = var.resource_group_name
 
@@ -170,14 +185,19 @@ resource "azurerm_network_interface" "pw5269nic2" {
 
 resource "azurerm_subnet_network_security_group_association" "pw5269nictonsgs" {
   subnet_id =   azurerm_subnet.pw5269subs[0].id
-  network_security_group_id = azurerm_network_security_group.pw5269nsg1.id
+  network_security_group_id = azurerm_network_security_group.pw5269nsg.id
+
+    depends_on = [
+    azurerm_subnet.pw5269subs,
+  ]
 }
 
 
 
 
 resource "azurerm_virtual_machine" "pw5269vm1" {
-  name                  = "${var.vm_name_prefix}-vm"
+  # name                  = "${var.vm_name_prefix}-vm"
+  name                  = local.vmname
   location              = var.resource_group_location
   resource_group_name   = var.resource_group_name
   network_interface_ids = [azurerm_network_interface.pw5269nic1.id]
@@ -218,7 +238,8 @@ os_profile {
 
 
 resource "azurerm_virtual_machine" "pw5269vm2" {
-  name                  = "${var.vm_name_prefix}-vm"
+  # name                  = "${var.vm_name_prefix}-vm"
+  name                  = local.vmname
   location              = var.resource_group_location
   resource_group_name   = var.resource_group_name
   network_interface_ids = [azurerm_network_interface.pw5269nic2.id]
