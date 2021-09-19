@@ -1,5 +1,5 @@
 cloud shell run 
-az ad sp create-for-rbac -n terraform-5269-spn --role contributor
+az ad sp create-for-rbac -n terraform-5269-spn --role contributor --scopes="subscriptions/b312c3d5-5b7c-4ab6-ae52-2b3a94b9c232"
 
 output 
 
@@ -25,14 +25,15 @@ then click on your subscription > IAM access control >role assignments you shoud
 
 so in your main.tf 
 
+
 so in the main.tf 
 
 provider "azurerm" {
   features {}
 
   subscription_id = "b312c3d5-5b7c-4ab6-ae52-2b3a94b9c232" = subscription_id
-  client_id       = "68aad817-b4d7-4642-bbab-825637fdfd54" = appid from above 
-  client_secret   = "s~7bWp5MCk5xBwSdPbjaDnESZJi23jQnZi" = password from above 
+  client_id       = "a9d85e3e-105d-4375-894e-1086362f02c9" = appid from above 
+  client_secret   = "774k5qvdFKhD3dQF6A65KzPOF2skWGCHC_" = password from above 
   tenant_id       = "d4cfe037-3ef4-42d7-a3f8-74f292af0782" = tenant from above 
 }
 
@@ -53,5 +54,5 @@ no login required!!!!
 
 to remove the SPN use the following - the id is the client id 
 
-az login 
+az login --tenant d4cfe037-3ef4-42d7-a3f8-74f292af0782
 az ad sp delete --id 68aad817-b4d7-4642-bbab-825637fdfd54 
