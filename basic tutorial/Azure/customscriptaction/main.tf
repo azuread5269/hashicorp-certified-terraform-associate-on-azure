@@ -118,7 +118,7 @@ resource "azurerm_subnet_network_security_group_association" "rg" {
    name                = "AZ-VM-00-VM01"
    resource_group_name = var.resource_group_name
    location            = var.resource_group_location
-   size                = "Standard_B1s"
+   size                = "Standard_B1ms"
    admin_username      = "pwaller"
    admin_password      = "Pa55w0rd101!"
 #  delete_os_disk_on_termination = true
