@@ -11,7 +11,6 @@
     protocol                   = "Tcp"
     source_port_range          = "*"
     destination_port_ranges     = "${var.destination_port_range}"
-    # destination_port_ranges    = [80,3389,5985]
     source_address_prefix      = "*"
     destination_address_prefix = "*"
   }

@@ -1,17 +1,11 @@
 
-
-
-
-
-
-
-
  resource "azurerm_windows_virtual_machine" "rg" {
    count = 2  
    name                = "AZ-VM-00-${count.index}"
    resource_group_name = var.resource_group_name
    location            = var.resource_group_location
-   size                = "Standard_B1s"
+   availability_set_id = azurerm_availability_set.rg.id
+   size                = "Standard_B1ms"
    admin_username      = "pwaller"
    admin_password      = "Pa55w0rd101!"
    network_interface_ids = [
