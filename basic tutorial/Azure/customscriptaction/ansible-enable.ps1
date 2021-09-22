@@ -56,7 +56,7 @@ IF (($Mod))
      ((Get-AzVM -Name $VMName.Name -ResourceGroupName $RGName.ResourceGroupName -Status).Extensions | Where-Object {$_.Name -eq $ExtensionName}).Substatuses
 
      Write-Verbose "Remove extension" -Verbose
-     Remove-AzVMExtension -ResourceGroupName $RGName -VMName $VMName -Name $Extensionname -Force
+     Remove-AzVMExtension -ResourceGroupName $RGName.ResourceGroupName -VMName $VMName.Name -Name $Extensionname -Force
 }
 else
 {
