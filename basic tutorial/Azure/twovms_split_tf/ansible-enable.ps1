@@ -46,17 +46,25 @@ IF (($Mod))
     $PrivateConfiguration = @{"storageAccountName" = "$ScriptBlobAccount";"storageAccountKey" = "$ScriptBlobKey"} 
     $PublicConfiguration = @{"fileUris" = [Object[]]"$ScriptLocation";"timestamp" = "$timestamp";"commandToExecute" = "powershell.exe -ExecutionPolicy Unrestricted -Command $ScriptExe"}
 
-    Write-Verbose "set Extension on VM via Tools" -Verbose
-    Set-AzVMExtension -ResourceGroupName $RGName.ResourceGroupName -VMName $VMName.Name -Location $Location `
-    -Name $ExtensionName -Publisher $Publisher -ExtensionType $ExtensionType -TypeHandlerVersion $Version `
-     -Settings $PublicConfiguration -ProtectedSettings $PrivateConfiguration 
-
+    foreach ($VM in $VMName)
+    {
+        Write-Verbose "set Extension on VM via Tools for vm $($VM.Name)" -Verbose
+        Set-AzVMExtension -ResourceGroupName $RGName.ResourceGroupName -VMName $VM.Name -Location $Location `
+        -Name $ExtensionName -Publisher $Publisher -ExtensionType $ExtensionType -TypeHandlerVersion $Version `
+        -Settings $PublicConfiguration -ProtectedSettings $PrivateConfiguration 
+    }
 
      Write-Verbose "Obtain Extension status" -Verbose
-     ((Get-AzVM -Name $VMName.Name -ResourceGroupName $RGName.ResourceGroupName -Status).Extensions | Where-Object {$_.Name -eq $ExtensionName}).Substatuses
+     foreach ($VM in $VMName)
+     {
+        ((Get-AzVM -Name $VM.Name -ResourceGroupName $RGName.ResourceGroupName -Status).Extensions | Where-Object {$_.Name -eq $ExtensionName}).Substatuses
+     }
 
-     Write-Verbose "Remove extension" -Verbose
-     Remove-AzVMExtension -ResourceGroupName $RGName.ResourceGroupName -VMName $VMName.Name -Name $Extensionname -Force
+    foreach ($VM in $VMName)
+    {
+        Write-Verbose "Remove extension for VM $($VM.Name)" -Verbose
+        Remove-AzVMExtension -ResourceGroupName $RGName.ResourceGroupName -VMName $VM.Name -Name $Extensionname -Force
+    }
 }
 else
 {
