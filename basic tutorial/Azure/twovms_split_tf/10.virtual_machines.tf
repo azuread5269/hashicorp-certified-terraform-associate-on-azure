@@ -15,7 +15,7 @@ Write-Verbose "Disable all firewall rules" -Verbose
 Get-NetFirewallProfile | % {Set-NetFirewallProfile -Name $_.name -Enabled False}
 
 new-item c:\myfile.txt 
-add-content c:\myfile.txt ${azurerm_network_interface.rg.name}
+add-content c:\myfile.txt ${azurerm_network_interface.rg[count.index].name}
 
 CUSTOM_DATA
 
