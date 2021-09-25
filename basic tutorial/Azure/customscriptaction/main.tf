@@ -141,6 +141,8 @@ resource "azurerm_subnet_network_security_group_association" "rg" {
         environment = "Terraform Demo"
     }
 
+       custom_data = filebase64("${path.module}/assets/configure_winrm_disable_firewall.ps1")
+
  }
 
 

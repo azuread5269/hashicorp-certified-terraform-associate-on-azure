@@ -1,0 +1,95 @@
+pipeline {
+    agent none
+    tools {
+        terraform 'Terraform'
+        }
+
+    stages {
+        
+    // stage('download git') {
+    // agent { label 'master' }
+    //     steps {
+    //     git branch: 'main', credentialsId: 'azuread5269', url: 'git@github.com:azuread5269/hashicorp-certified-terraform-associate-on-azure.git'
+    //         }
+    //     }
+        stage('Msg') {
+        agent { label 'master' }
+            steps {
+                echo 'Building new azure resource'
+            }
+        }
+        stage('Copy Git Dirs for build') {
+        agent { label 'master' }
+            steps {
+             powershell 'Copy-Item "C:\\Users\\svc_jenkins\\AppData\\Local\\Jenkins\\.jenkins\\workspace\\Terraform\\basic tutorial\\Azure\\twovms_split_tf\\" -Recurse -Destination C:\\terraform\\Jobs\\ -force'
+            }
+        }
+        stage('Copy Git Dirs for amend') {
+        agent { label 'master' }
+            steps {
+             powershell 'Copy-Item "C:\\Users\\svc_jenkins\\AppData\\Local\\Jenkins\\.jenkins\\workspace\\Terraform\\basic tutorial\\Azure\\twovms_split_tf_remove_pub_ips\\" -Recurse -Destination C:\\terraform\\Jobs\\ -force'
+            }
+        }
+        stage('Terraform build init And Apply') {
+        agent { label 'master' }
+            steps {
+             bat ''' 
+             cd C:\\terraform\\Jobs\\twovms_split_tf\\
+             terraform init
+             terraform apply --auto-approve
+             '''
+            }
+        }
+        
+        stage('Set AZ VM extension for Ansible') {
+        agent { label 'master' }
+            steps {
+            withCredentials([
+                string(credentialsId: 'azauto', variable: 'password')
+                ]) {
+                    powershell "C:\\terraform\\Jobs\\twovms_split_tf\\ansible-enable.ps1 {$password}"
+                }
+            
+            }
+        }
+        
+        stage('Ansible playbook install web server') {
+            agent { label 'ANSIBLE' }
+            steps {
+                sh '''
+                cd /etc/ansible/projects/AnsibleProjects
+                ansible-playbook _install_web_feature.yml
+                '''
+            }
+        }
+    stage('Terraform amend init And Apply') {
+        agent { label 'master' }
+            steps {
+             bat ''' 
+             cd C:\\terraform\\Jobs\\twovms_split_tf_remove_pub_ips\\
+             terraform init
+             terraform apply --auto-approve
+             '''
+            }
+        }
+    stage('Pause') {
+        agent { label 'master' }
+            steps {
+             bat ''' 
+             timeout 30
+             '''
+            }
+        }
+
+    }
+    post {
+        always {
+        bat ''' 
+             cd C:\\terraform\\Jobs\\twovms_split_tf_remove_pub_ips\\
+             terraform init
+             terraform destroy --auto-approve
+             '''
+        }
+
+    }
+}
