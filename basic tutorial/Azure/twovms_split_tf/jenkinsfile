@@ -6,16 +6,23 @@ pipeline {
 
     stages {
         
-    // stage('download git') {
-    // agent { label 'master' }
-    //     steps {
-    //     git branch: 'main', credentialsId: 'azuread5269', url: 'git@github.com:azuread5269/hashicorp-certified-terraform-associate-on-azure.git'
-    //         }
-    //     }
-        stage('Msg') {
+    stage('download git') {
+    agent { label 'master' }
+        steps {
+        git branch: 'main', credentialsId: 'azuread5269', url: 'git@github.com:azuread5269/hashicorp-certified-terraform-associate-on-azure.git'
+            }
+        }
+        stage('run build') {
         agent { label 'master' }
             steps {
-                echo 'Building new azure resource'
+                echo 'Run Terraform Build'
+            }
+        }
+        stage('remove old Dirs for build') {
+        agent { label 'master' }
+            steps {
+             powershell 'remove-Item C:\\terraform\\Jobs\\twovms_split_tf -force -Confirm:$false -Recurse -ErrorAction SilentlyContinue '
+             powershell 'remove-Item C:\\terraform\\Jobs\\twovms_split_tf_reconfigure -force -Confirm:$false -Recurse -ErrorAction SilentlyContinue'
             }
         }
         stage('Copy Git Dirs for build') {
@@ -27,7 +34,7 @@ pipeline {
         stage('Copy Git Dirs for amend') {
         agent { label 'master' }
             steps {
-             powershell 'Copy-Item "C:\\Users\\svc_jenkins\\AppData\\Local\\Jenkins\\.jenkins\\workspace\\Terraform\\basic tutorial\\Azure\\twovms_split_tf_remove_pub_ips\\" -Recurse -Destination C:\\terraform\\Jobs\\ -force'
+             powershell 'Copy-Item "C:\\Users\\svc_jenkins\\AppData\\Local\\Jenkins\\.jenkins\\workspace\\Terraform\\basic tutorial\\Azure\\twovms_split_tf_reconfigure\\" -Recurse -Destination C:\\terraform\\Jobs\\ -force'
             }
         }
         stage('Terraform build init And Apply') {
@@ -52,7 +59,7 @@ pipeline {
             
             }
         }
-        
+ 
         stage('Ansible playbook install web server') {
             agent { label 'ANSIBLE' }
             steps {
@@ -62,16 +69,31 @@ pipeline {
                 '''
             }
         }
-    stage('Terraform amend init And Apply') {
+        stage('Test Web Server IIS') {
+        agent { label 'master' }
+         steps {
+            script {
+            try {
+                powershell 'C:\\terraform\\Jobs\\twovms_split_tf\\invoke_pester_tests.ps1'
+            }
+            catch(exc) {
+                echo 'Issue with pester tests'
+            }
+        }
+        
+        }
+    }
+       stage('Terraform amend init And Apply') {
         agent { label 'master' }
             steps {
              bat ''' 
-             cd C:\\terraform\\Jobs\\twovms_split_tf_remove_pub_ips\\
+             cd C:\\terraform\\Jobs\\twovms_split_tf_reconfigure\\
              terraform init
              terraform apply --auto-approve
              '''
             }
         }
+        
     stage('Pause') {
         agent { label 'master' }
             steps {
@@ -80,16 +102,41 @@ pipeline {
              '''
             }
         }
-
+   
     }
+    
     post {
         always {
-        bat ''' 
-             cd C:\\terraform\\Jobs\\twovms_split_tf_remove_pub_ips\\
-             terraform init
-             terraform destroy --auto-approve
-             '''
+        calldestroy1()
+        calldestroy2()
         }
-
+    
     }
 }
+def calldestroy1() {
+node ('master'){
+    def err = null
+         echo "I am a windows host"
+         bat "ipconfig.exe"
+         bat "hostname.exe"
+         bat ''' 
+         cd C:\\terraform\\Jobs\\twovms_split_tf_remove_pub_ips\\
+         terraform init
+         terraform destroy --auto-approve
+         '''
+    }
+}
+def calldestroy2() {
+node ('master'){
+    def err = null
+         echo "I am a windows host"
+         bat "ipconfig.exe"
+         bat "hostname.exe"
+         bat ''' 
+         cd C:\\terraform\\Jobs\\twovms_split_tf\\
+         terraform init
+         terraform destroy --auto-approve
+         '''
+    }
+}   
+  
