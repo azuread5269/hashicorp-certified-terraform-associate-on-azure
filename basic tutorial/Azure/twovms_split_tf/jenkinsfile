@@ -22,7 +22,7 @@ pipeline {
         agent { label 'master' }
             steps {
              powershell 'remove-Item C:\\terraform\\Jobs\\twovms_split_tf -force -Confirm:$false -Recurse -ErrorAction SilentlyContinue '
-             powershell 'remove-Item C:\\terraform\\Jobs\\twovms_split_tf_reconfigure -force -Confirm:$false -Recurse -ErrorAction SilentlyContinue'
+            //  powershell 'remove-Item C:\\terraform\\Jobs\\twovms_split_tf_reconfigure -force -Confirm:$false -Recurse -ErrorAction SilentlyContinue'
             }
         }
         stage('Copy Git Dirs for build') {
@@ -31,19 +31,19 @@ pipeline {
              powershell 'Copy-Item "C:\\Users\\svc_jenkins\\AppData\\Local\\Jenkins\\.jenkins\\workspace\\Terraform\\basic tutorial\\Azure\\twovms_split_tf\\" -Recurse -Destination C:\\terraform\\Jobs\\ -force'
             }
         }
-        stage('Copy Git Dirs for amend') {
-        agent { label 'master' }
-            steps {
-             powershell 'Copy-Item "C:\\Users\\svc_jenkins\\AppData\\Local\\Jenkins\\.jenkins\\workspace\\Terraform\\basic tutorial\\Azure\\twovms_split_tf_reconfigure\\" -Recurse -Destination C:\\terraform\\Jobs\\ -force'
-            }
-        }
+        // stage('Copy Git Dirs for amend') {
+        // agent { label 'master' }
+        //     steps {
+        //      powershell 'Copy-Item "C:\\Users\\svc_jenkins\\AppData\\Local\\Jenkins\\.jenkins\\workspace\\Terraform\\basic tutorial\\Azure\\twovms_split_tf_reconfigure\\" -Recurse -Destination C:\\terraform\\Jobs\\ -force'
+        //     }
+        // }
         stage('Terraform build init And Apply') {
         agent { label 'master' }
             steps {
              bat ''' 
              cd C:\\terraform\\Jobs\\twovms_split_tf\\
              terraform init
-             terraform apply --auto-approve
+             terraform apply --auto-approve plan config_all_plan.plan
              '''
             }
         }
@@ -83,16 +83,17 @@ pipeline {
         
         }
     }
-       stage('Terraform amend init And Apply') {
+        stage('Terraform reconfigure init And Apply') {
         agent { label 'master' }
             steps {
              bat ''' 
-             cd C:\\terraform\\Jobs\\twovms_split_tf_reconfigure\\
+             cd C:\\terraform\\Jobs\\twovms_split_tf\\
              terraform init
-             terraform apply --auto-approve
+             terraform apply --auto-approve plan reconfig_all_plan.plan
              '''
             }
         }
+        
     
         stage('Test Web Server load balancer') {
         agent { label 'master' }
