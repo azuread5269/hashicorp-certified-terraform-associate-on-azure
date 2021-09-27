@@ -22,7 +22,7 @@ pipeline {
         agent { label 'master' }
             steps {
              powershell 'remove-Item C:\\terraform\\Jobs\\twovms_split_tf -force -Confirm:$false -Recurse -ErrorAction SilentlyContinue '
-            //  powershell 'remove-Item C:\\terraform\\Jobs\\twovms_split_tf_reconfigure -force -Confirm:$false -Recurse -ErrorAction SilentlyContinue'
+             powershell 'remove-Item C:\\terraform\\Jobs\\twovms_split_tf_reconfigure -force -Confirm:$false -Recurse -ErrorAction SilentlyContinue'
             }
         }
         stage('Copy Git Dirs for build') {
@@ -31,19 +31,19 @@ pipeline {
              powershell 'Copy-Item "C:\\Users\\svc_jenkins\\AppData\\Local\\Jenkins\\.jenkins\\workspace\\Terraform\\basic tutorial\\Azure\\twovms_split_tf\\" -Recurse -Destination C:\\terraform\\Jobs\\ -force'
             }
         }
-        // stage('Copy Git Dirs for amend') {
-        // agent { label 'master' }
-        //     steps {
-        //      powershell 'Copy-Item "C:\\Users\\svc_jenkins\\AppData\\Local\\Jenkins\\.jenkins\\workspace\\Terraform\\basic tutorial\\Azure\\twovms_split_tf_reconfigure\\" -Recurse -Destination C:\\terraform\\Jobs\\ -force'
-        //     }
-        // }
+        stage('Copy Git Dirs for amend') {
+        agent { label 'master' }
+            steps {
+             powershell 'Copy-Item "C:\\Users\\svc_jenkins\\AppData\\Local\\Jenkins\\.jenkins\\workspace\\Terraform\\basic tutorial\\Azure\\twovms_split_tf_reconfigure\\" -Recurse -Destination C:\\terraform\\Jobs\\ -force'
+            }
+        }
         stage('Terraform build init And Apply') {
         agent { label 'master' }
             steps {
              bat ''' 
              cd C:\\terraform\\Jobs\\twovms_split_tf\\
              terraform init
-             terraform apply --auto-approve plan config_all_plan.plan
+             terraform apply --auto-approve
              '''
             }
         }
@@ -78,22 +78,22 @@ pipeline {
             }
             catch(exc) {
                 echo 'Issue with pester tests'
+                    }
+                }
+        
             }
         }
-        
-        }
-    }
-        stage('Terraform reconfigure init And Apply') {
+        stage('disable Public ip addresses on VMs') {
         agent { label 'master' }
             steps {
-             bat ''' 
-             cd C:\\terraform\\Jobs\\twovms_split_tf\\
-             terraform init
-             terraform apply --auto-approve plan reconfig_all_plan.plan
-             '''
+            withCredentials([
+                string(credentialsId: 'azauto', variable: 'password')
+                ]) {
+                    powershell "C:\\terraform\\Jobs\\twovms_split_tf\\disable_vm_public_ips.ps1 {$password}"
+                }
+            
             }
         }
-        
     
         stage('Test Web Server load balancer') {
         agent { label 'master' }
@@ -104,8 +104,8 @@ pipeline {
             }
             catch(exc) {
                 echo 'Issue with pester tests'
+                }
             }
-        }
         
         }
     }
@@ -123,25 +123,25 @@ pipeline {
     post {
         always {
         calldestroy1()
-        calldestroy2()
+        // calldestroy2()
         }
     
     }
 }
+// def calldestroy1() {
+// node ('master'){
+//     def err = null
+//          echo "I am a windows host"
+//          bat "ipconfig.exe"
+//          bat "hostname.exe"
+//          bat ''' 
+//          cd C:\\terraform\\Jobs\\twovms_split_tf_remove_pub_ips\\
+//          terraform init
+//          terraform destroy --auto-approve
+//          '''
+//     }
+// }
 def calldestroy1() {
-node ('master'){
-    def err = null
-         echo "I am a windows host"
-         bat "ipconfig.exe"
-         bat "hostname.exe"
-         bat ''' 
-         cd C:\\terraform\\Jobs\\twovms_split_tf_remove_pub_ips\\
-         terraform init
-         terraform destroy --auto-approve
-         '''
-    }
-}
-def calldestroy2() {
 node ('master'){
     def err = null
          echo "I am a windows host"

@@ -1,6 +1,6 @@
 Import-Module Pester 
 
-$getjson = Get-Content terraform.tfstate 
+$getjson = Get-Content C:\terraform\Jobs\twovms_split_tf\terraform.tfstate.backup
 $Fqdn = $getjson | Select-String '"fqdn":'
 $FqdnToTest = 
 $Fqdn.ForEach({
