@@ -22,6 +22,7 @@ pipeline {
         agent { label 'master' }
             steps {
              powershell 'remove-Item C:\\terraform\\Jobs\\twovms_split_tf -force -Confirm:$false -Recurse -ErrorAction SilentlyContinue '
+
             }
         }
         stage('Copy Git Dirs for build') {
@@ -51,6 +52,7 @@ pipeline {
             
             }
         }
+ 
         stage('Ansible playbook install web server') {
             agent { label 'ANSIBLE' }
             steps {
@@ -100,24 +102,38 @@ pipeline {
         
         }
     }
-    stage('Pause') {
-        agent { label 'master' }
-            steps {
-             bat ''' 
-             timeout 30
-             '''
-            }
-        }
+    // stage('Pause') {
+    //     agent { label 'master' }
+    //         steps {
+    //          bat ''' 
+    //          timeout 30
+    //          '''
+    //         }
+    //     }
    
     }
     
     post {
         always {
         calldestroy1()
+        // calldestroy2()
         }
     
     }
 }
+// def calldestroy1() {
+// node ('master'){
+//     def err = null
+//          echo "I am a windows host"
+//          bat "ipconfig.exe"
+//          bat "hostname.exe"
+//          bat ''' 
+//          cd C:\\terraform\\Jobs\\twovms_split_tf_remove_pub_ips\\
+//          terraform init
+//          terraform destroy --auto-approve
+//          '''
+//     }
+// }
 def calldestroy1() {
 node ('master'){
     def err = null
