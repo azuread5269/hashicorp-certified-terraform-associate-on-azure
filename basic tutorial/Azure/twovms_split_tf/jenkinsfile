@@ -93,7 +93,21 @@ pipeline {
              '''
             }
         }
+    
+        stage('Test Web Server load balancer') {
+        agent { label 'master' }
+         steps {
+            script {
+            try {
+                powershell 'C:\\terraform\\Jobs\\twovms_split_tf\\invoke_pester_lbtests.ps1'
+            }
+            catch(exc) {
+                echo 'Issue with pester tests'
+            }
+        }
         
+        }
+    }
     stage('Pause') {
         agent { label 'master' }
             steps {
