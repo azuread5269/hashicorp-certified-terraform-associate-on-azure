@@ -1,6 +1,6 @@
 
 param (
-    [string]$Password 
+    [string]$Password = "Camberwe!!Carr0t!"
 )
 write-verbose "importing AZ Powershell Module into current session" -verbose
 Import-Module az
@@ -31,8 +31,8 @@ IF (($Mod))
     Write-Verbose "Obtain binary blob contaning ansible script in portal" -Verbose
     $ScriptblobAccount = "pw5269scriptstore"
     $Scriptbloburl =  "https://pw5269scriptstore.blob.core.windows.net/pw5269containerscriptstore/"
-    $Scriptblobkey = $StorageAccessKeys
-
+    $Scriptblobkey = $StorageAccessKeys[0].Value
+    #$Scriptblobkey ="6FOCjry/d/8S3tBo83f4sN+PfxamCuJ0KP7vlBsNrLiWiwf15dubbUbYoot6PoEX6mFxTzJlMBFOY/k1LmBrUQ=="
 
     Write-Verbose "Obtain custom script specifications in portal" -Verbose
     $Scriptname = "ansiblewinrm.ps1"
