@@ -1,13 +1,21 @@
 Import-Module Pester 
 
-$getjson = Get-Content C:\terraform\Jobs\twovms_split_tf\terraform.tfstate.backup
-$Fqdn = $getjson | Select-String '"fqdn":'
-$FqdnToTest = 
-$Fqdn.ForEach({
-[string]$String = $_ 
-($String.split(':')[1]).Replace('"','').Replace(',','').Trim().TrimEnd().TrimStart()
+Write-Verbose "Obtain LB name from 10.lb_public_ip.tf" -Verbose
+$LBpubfqdn =  (((Get-Content C:\terraform\Jobs\twovms_split_tf\10.lb_public_ip.tf | Select-String 'domain_name_label').ToString().Trim().TrimEnd().Split('=')[1])).Replace('"','').Trim()
 
-})
+Write-Verbose "Obtain count from 5.public_ips.tf" -Verbose
+$VMpubipcount  = ((Get-Content C:\terraform\Jobs\twovms_split_tf\5.public_ips.tf | Select-String 'count = ').ToString().Trim().TrimEnd().Split('=')[1]).Trim()
+
+Write-Verbose "Obtain names from 5.public_ips.tf" -Verbose
+$VMpubfqdn = (((Get-Content C:\terraform\Jobs\twovms_split_tf\5.public_ips.tf | Select-String 'domain_name_label').ToString().Trim().TrimEnd().Split('=')[1]).Trim().Split('$')[0]).Replace('"','')
+$i = 0
+$VMFQDNS = 
+do {
+    $VMpubfqdn+$i+".ukwest.cloudapp.azure.com"
+    $i++
+}until($i -eq $VMpubipcount)
+$LBFQDN = $LBpubfqdn+".ukwest.cloudapp.azure.com"
+$FqdnToTest = $VMFQDNS+=$LBFQDN
 
 
 Describe "test Web-server on Azure" {
