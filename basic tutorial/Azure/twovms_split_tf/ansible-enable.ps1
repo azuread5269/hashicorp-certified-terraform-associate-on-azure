@@ -1,6 +1,6 @@
 
 param (
-    [string]$Password = "Camberwe!!Carr0t!"
+    [string]$Password 
 )
 write-verbose "importing AZ Powershell Module into current session" -verbose
 Import-Module az
