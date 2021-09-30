@@ -1,5 +1,4 @@
  resource "azurerm_windows_virtual_machine" "rgauth" {
-   count = 2  
    name                = "AZ-VM-00-auth"
    resource_group_name = var.resource_group_name
    location            = var.resource_group_location
@@ -7,10 +6,11 @@
    admin_username      = "pwaller"
    admin_password      = "Pa55w0rd101!"
    network_interface_ids = [
-     azurerm_network_interface.rgweb.*.id[count.index],
+     azurerm_network_interface.rgauth.id,
    ]
  os_disk {
      caching              = "ReadWrite"
+     
      storage_account_type = "Standard_LRS"
    }
  source_image_reference {
