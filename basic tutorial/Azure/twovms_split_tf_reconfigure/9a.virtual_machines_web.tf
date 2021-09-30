@@ -23,7 +23,9 @@
     tags = {
         environment = "Terraform Demo"
     }
-
+    depends_on = [
+      azurerm_network_interface.rgweb
+    ]
     # custom_data = filebase64("${path.module}/assets/configure_winrm_disable_firewall.ps1")
       
     }
