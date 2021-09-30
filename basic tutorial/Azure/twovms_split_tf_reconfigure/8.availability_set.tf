@@ -1,4 +1,4 @@
-resource "azurerm_availability_set" "rg" {
+resource "azurerm_availability_set" "rgweb" {
 name                           = "AZ-VM-00-AVSET"
 resource_group_name = var.resource_group_name
 location  = var.resource_group_location

@@ -43,7 +43,7 @@ variable "public_ip_address" {
 
 
 
-variable "destination_port_range" {
+variable "destination_port_range_web" {
     type        = list(string)
     description = "Azure network security rule1"
     default = [
@@ -53,6 +53,16 @@ variable "destination_port_range" {
         "5986"
     ]
 }
+variable "destination_port_range_auth" {
+    type        = list(string)
+    description = "Azure network security rule1"
+    default = [
+        "3389",
+        "5985",
+        "5986"
+    ]
+}
+
 
 variable "subnet_prefix" {
     type = list(string)

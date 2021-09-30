@@ -1,6 +1,6 @@
 
 param (
-    [string]$Password
+    [string]$Password 
 )
 write-verbose "importing AZ Powershell Module into current session" -verbose
 Import-Module az
@@ -25,10 +25,14 @@ IF (($Mod))
     Write-Verbose "Obtain locations in portal" -Verbose
     $Location = "ukwest"
 
+    Write-Verbose "Obtain Storage Access keys for pw5269scriptstore" -Verbose
+    $StorageAccessKeys = Get-AzStorageAccountKey -ResourceGroupName     $RGname.ResourceGroupName -Name pw5269scriptstore 
+
     Write-Verbose "Obtain binary blob contaning ansible script in portal" -Verbose
     $ScriptblobAccount = "pw5269scriptstore"
     $Scriptbloburl =  "https://pw5269scriptstore.blob.core.windows.net/pw5269containerscriptstore/"
-    $Scriptblobkey = "6Pt+M1SgiU7c4UHnbEZ24Spm44XozLSCrS+u2Lc6gd3nOpvG+9mOOyClqz40BpL/DsmegLWY55HMcs3mkP8AgA=="
+    $Scriptblobkey = $StorageAccessKeys[0].Value
+    #$Scriptblobkey ="6FOCjry/d/8S3tBo83f4sN+PfxamCuJ0KP7vlBsNrLiWiwf15dubbUbYoot6PoEX6mFxTzJlMBFOY/k1LmBrUQ=="
 
     Write-Verbose "Obtain custom script specifications in portal" -Verbose
     $Scriptname = "ansiblewinrm.ps1"
@@ -41,6 +45,7 @@ IF (($Mod))
     Write-Verbose "concatenate script and URL" -Verbose
     $Scriptlocation = $Scriptbloburl + $Scriptname
     $Scriptexe = ".\$Scriptname"
+
 
     Write-Verbose "concatenate URLs and storage accont " -Verbose
     $PrivateConfiguration = @{"storageAccountName" = "$ScriptBlobAccount";"storageAccountKey" = "$ScriptBlobKey"} 
