@@ -52,6 +52,7 @@ resource "azurerm_storage_blob" "pw_sb" {
   storage_account_name   = var.storage_account_name
   storage_container_name = var.storage_container 
   type                   = "Block"
+  
   depends_on = [
     azurerm_storage_container.pw_sc,
   ]
