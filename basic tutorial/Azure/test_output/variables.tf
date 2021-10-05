@@ -15,3 +15,37 @@ variable "resource_group_location" {
     default =  "pw5269resourcegroup"
 
 }
+
+variable "destination_port_range_list" {
+    type        = list(string)
+    description = "Azure network security rule1"
+    default = [
+        "80",
+        "3389",
+        "5985",
+        "5986"
+    ]
+}
+
+variable "destination_port_range_map" {
+    type        = map(string)
+    description = "Azure network security rule1"
+    default =  {
+        "101" : "80"
+        "102" :"3389"
+        "103" :"5985"
+        "101" :"5986"
+        }
+    
+}
+
+variable "subnet_prefix" {
+    type = list(string)
+    description = "my subnet prefixes"
+    default = [
+         "192.168.1.0/24",
+         "192.168.2.0/24",
+         "192.168.3.0/24"
+    ]
+}
+
