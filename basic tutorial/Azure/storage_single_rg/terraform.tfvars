@@ -1,7 +1,0 @@
-resource_group_name     = "pw5269resourcegroup"
-resource_group_location = "UKWest"
-storage_account_name   = "pw5269storage"
-account_tier            = "Standard"
-account_replication_type = "LRS"
-storage_container = "pw5269storagecontainer"
-storage_blob = "terraform.state"

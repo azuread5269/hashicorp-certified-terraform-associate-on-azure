@@ -1,3 +1,0 @@
-terraform plan -out tfplan 
-terraform show -json tfplan >> tfplan.json
-then right click file and then inside text right click and select format with ..beautify

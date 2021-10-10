@@ -1,3 +1,0 @@
-terraform init
-terraform plan -out websqltfplan 
-terraform apply websqltfplan

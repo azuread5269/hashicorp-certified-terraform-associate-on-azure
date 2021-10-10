@@ -1,8 +1,0 @@
-resource_group_name     = "my_terraform_rg5269"
-resource_group_location = "West Europe"
-app_service_plan_name   = "my-appserviceplan5269"
-app_service_name        = "terraform-demo-5269"
-sql_server_name         = "terraform-sqlserver-5269"
-sql_database_name       = "ProductsDB5269"
-sql_admin_login         = "user01"
-sql_admin_password      = "@Aa123456789!"
