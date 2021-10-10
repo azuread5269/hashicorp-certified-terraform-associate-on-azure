@@ -27,17 +27,19 @@ IF (($Mod))
     $StorageAccessKeys = Get-AzStorageAccountKey -ResourceGroupName    $RGname.ResourceGroupName -Name pw5269scriptstore 
 
     Write-Verbose "Obtain Storage Account" -Verbose
-    $SA = Get-AzStorageAccount | ? {$_.StorageAccountName -match 'pw5269storage'} 
+    $SA = Get-AzStorageAccount | ? {$_.StorageAccountName -match 'pw5269storage$'} 
     Write-Verbose "Obtain Storage Account container" -Verbose
     $container = Get-AzStorageContainer -Context $SA.Context | ? {$_.Name -match 'pw'}
     Write-Verbose "Obtain Storage blob" -Verbose
     $Blobs = Get-AzStorageBlob -Container $container.Name -Context $SA.Context 
     Write-Verbose "Obtain Storage blob content and download to c:\terraform" -Verbose
-    $Blobcontent = Get-AzStorageBlobContent -Container $container.Name -Context $SA.Context -Blob "terraform.state" -Destination /tmp -Force
+    $Blobcontent = Get-AzStorageBlobContent -Container $container.Name -Context $SA.Context -Blob "terraform.state" -Destination C:\terraform\Jobs\test_output -Force
     Write-Verbose "Convert from JSON" -Verbose
-    $content = Get-Content C:\terraform\terraform.state | ConvertFrom-Json
+    $content = Get-Content C:\terraform\Jobs\test_output\terraform.state | ConvertFrom-Json
     Write-Verbose "Obtain FQDNS" -Verbose
     $FQDNS = $content.outputs.public_fqdn.value
+    Write-Verbose "Write out FQDNs to C:\terraform\Jobs\test_output\fqdns.txt" -Verbose
+    $FQDNS | Out-File C:\terraform\Jobs\test_output\fqdns.txt 
       
 }
 else

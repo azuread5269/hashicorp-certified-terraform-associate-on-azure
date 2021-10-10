@@ -4,44 +4,63 @@ pipeline {
         terraform 'Terraform'
         }
 
-    stages {
+stages {
         
-    stage('download git') {
-    agent { label 'master' }
+    stage('download git on windows') {
+        agent { label 'master' }
         steps {
-        git branch: 'main', credentialsId: 'azuread5269', url: 'git@github.com:azuread5269/hashicorp-certified-terraform-associate-on-azure.git'
+                git branch: 'main', credentialsId: 'azuread5269', url: 'git@github.com:azuread5269/hashicorp-certified-terraform-associate-on-azure.git'
             }
         }
-        stage('run build') {
+    stage('download git on linux') {
+        agent { label 'ANSIBLE' }
+            steps {
+                git branch: 'main', credentialsId: 'azuread5269', url: 'git@github.com:azuread5269/hashicorp-certified-terraform-associate-on-azure.git'
+            }
+        }
+    stage('whoami') {
+        agent { label 'ANSIBLE' }
+            steps {
+                sh  'whoami'
+            }
+        }
+    stage('Copy Git Dirs for build linux ') {
+        agent { label 'ANSIBLE' }
+            steps {
+                sh  'sudo  cp -r "/home/pwaller/jenkinsfiles/workspace/test_output/basic tutorial/Azure/test_output" /etc/ansible/projects/AnsibleProjects/roles'
+            }
+        }
+   
+    stage('run build') {
         agent { label 'master' }
             steps {
                 echo 'Run Terraform Build'
             }
         }
-        stage('remove old Dirs for build') {
+    stage('remove old Dirs for build') {
         agent { label 'master' }
             steps {
-             powershell 'remove-Item C:\\terraform\\Jobs\\twovms_split_tf -force -Confirm:$false -Recurse -ErrorAction SilentlyContinue '
+             powershell 'remove-Item C:\\terraform\\Jobs\\test_output -force -Confirm:$false -Recurse -ErrorAction SilentlyContinue '
 
             }
         }
-        stage('Copy Git Dirs for build') {
+    stage('Copy Git Dirs for build') {
         agent { label 'master' }
             steps {
-             powershell 'Copy-Item "C:\\Users\\svc_jenkins\\AppData\\Local\\Jenkins\\.jenkins\\workspace\\Terraform\\basic tutorial\\Azure\\twovms_split_tf\\" -Recurse -Destination C:\\terraform\\Jobs\\ -force'
+             powershell 'Copy-Item "C:\\Users\\svc_jenkins\\AppData\\Local\\Jenkins\\.jenkins\\workspace\\test_output\\basic tutorial\\Azure\\test_output\\" -Recurse -Destination C:\\terraform\\Jobs\\ -force'
             }
         }
-        stage('Terraform build init And Apply') {
+    stage('Terraform build init And Apply') {
         agent { label 'master' }
             steps {
              bat ''' 
-             cd C:\\terraform\\Jobs\\twovms_split_tf\\
+             cd C:\\terraform\\Jobs\\test_output\\
              terraform init
              terraform apply --auto-approve
              '''
             }
         }
-        stage('Set AZ VM extension for Ansible') {
+    stage('Set AZ VM extension for Ansible') {
         agent { label 'master' }
             steps {
             withCredentials([
@@ -52,67 +71,47 @@ pipeline {
             
             }
         }
- 
-        stage('Ansible playbook install web server') {
-            agent { label 'ANSIBLE' }
-            steps {
-                sh '''
-                cd /etc/ansible/projects/AnsibleProjects
-                ansible-playbook _install_web_feature.yml
-                '''
-            }
-        }
-        stage('Test Web Server IIS') {
-        agent { label 'master' }
-         steps {
-            script {
-            try {
-                powershell 'C:\\terraform\\Jobs\\twovms_split_tf\\invoke_pester_tests.ps1'
-            }
-            catch(exc) {
-                echo 'Issue with pester tests'
-                    }
-                }
-        
-            }
-        }
-        stage('disable Public ip addresses on VMs') {
+    stage('Obtain FQDNs from backend blob storage') {
         agent { label 'master' }
             steps {
             withCredentials([
                 string(credentialsId: 'azauto', variable: 'password')
                 ]) {
-                    powershell "C:\\terraform\\Jobs\\twovms_split_tf\\disable_vm_public_ips.ps1 {$password}"
+                    powershell "C:\\terraform\\Jobs\\test_output\\obtain_fqdns_from_state_file.ps1 {$password}"
                 }
             
             }
         }
-    
-        stage('Test Web Server load balancer') {
+    stage('Copy FQDNs data to ansible') {
         agent { label 'master' }
-         steps {
-            script {
-            try {
-                powershell 'C:\\terraform\\Jobs\\twovms_split_tf\\invoke_pester_lbtests.ps1'
-            }
-            catch(exc) {
-                echo 'Issue with pester tests'
+            steps {
+            withCredentials([
+                string(credentialsId: 'azauto', variable: 'password')
+                ]) {
+                    powershell "C:\\terraform\\Jobs\\test_output\\copy_fqdns_to_ansible.ps1 {$ansiblepassword}"
                 }
+            
             }
-        
         }
+    stage('Create hosts file with FQDN data') {
+        agent { label 'ANSIBLE' }
+            steps {
+            withCredentials([
+                string(credentialsId: 'azauto', variable: 'password')
+                ]) {
+                    powershell "C:\\terraform\\Jobs\\test_output\\copy_fqdns_to_ansible.ps1 {$password}"
+                }
+            
+            }
+        }
+  
+  
+  
+
+
+
     }
-    // stage('Pause') {
-    //     agent { label 'master' }
-    //         steps {
-    //          bat ''' 
-    //          timeout 30
-    //          '''
-    //         }
-    //     }
-   
-    }
-    
+    /*
     post {
         always {
         calldestroy1()
@@ -120,6 +119,7 @@ pipeline {
         }
     
     }
+    */
 }
 // def calldestroy1() {
 // node ('master'){

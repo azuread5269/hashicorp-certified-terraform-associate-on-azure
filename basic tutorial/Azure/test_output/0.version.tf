@@ -16,5 +16,6 @@ terraform {
     storage_account_name = "pw5269storage"
     container_name = "pw5269storagecontainer"
     key = "terraform.state"
+   
   }
 }

@@ -12,9 +12,9 @@ terraform {
     }
   }
   backend "azurerm" {
-    resource_group_name = "pw5269resourcegroup"
-    storage_account_name = "pw5269storage"
-    container_name = "pw5269storagecontainer"
+    resource_group_name = "pw5269resourcegroupvm"
+    storage_account_name = "pw5269storagevm"
+    container_name = "pw5269storagecontainervm"
     key = "terraform.state"
   }
 }
